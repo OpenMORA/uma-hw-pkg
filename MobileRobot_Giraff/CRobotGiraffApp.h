@@ -30,16 +30,13 @@
 #define CRobotGiraffApp_H
 
 
-#include <CMapirMOOSApp.h>
+#include <COpenMORAMOOSApp.h>
 #include <mrpt/hwdrivers/CActivMediaRobotBase.h>
-
 #include <mrpt/hwdrivers/CSerialPort.h>
-#include <mrpt/base.h>
-
 #include "CGiraffCommunication.h"
 #include "CGiraffMotorsCom.h"
 
-class CRobotGiraffApp : public CMapirMOOSApp
+class CRobotGiraffApp : public COpenMORAApp
 {
 
  

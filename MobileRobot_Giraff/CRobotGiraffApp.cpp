@@ -38,7 +38,8 @@
 #include <sstream>
 #include <iomanip>
 #include <iostream>
-#include <mrpt/slam.h>
+#include <mrpt/slam/CObservationOdometry.h>
+#include <mrpt/slam/CObservationBatteryState.h>
 
 using namespace std;
 using namespace mrpt;

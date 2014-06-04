@@ -1022,7 +1022,7 @@ bool CGiraffMotorsCom::receiveVariousLines( vector<string> &response, const size
 	for ( size_t i_line = 0; i_line < n_lines; i_line++ )
 		m_comms->read( response[i_line] );
 
-	for ( size_t i_line = 0; i_line < n_lines; i_line++ )
+	//for ( size_t i_line = 0; i_line < n_lines; i_line++ )
 	//	writeDebugLine(format("Response: %s",response[i_line].c_str()),MOTORS);
 	
 	return true;

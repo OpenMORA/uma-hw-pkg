@@ -20,8 +20,9 @@
 
 
 #include <mrpt/hwdrivers/CSerialPort.h>
-#include <mrpt/base.h>
+#include <mrpt/synch/CCriticalSection.h>
 #include "CGiraffCommunication.h"
+#include <fstream>
 
 namespace NAAS
 {

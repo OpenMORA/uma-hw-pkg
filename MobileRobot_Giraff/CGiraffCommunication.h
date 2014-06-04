@@ -19,8 +19,6 @@
 #define _CGiraffCommunication_
 
 #include <string>
-
-
 #include <mrpt/utils/CServerTCPSocket.h>
 #include <mrpt/utils/CClientTCPSocket.h>
 
