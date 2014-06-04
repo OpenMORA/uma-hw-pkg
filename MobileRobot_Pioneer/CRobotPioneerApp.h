@@ -30,11 +30,11 @@
 #define CRobotPioneerApp_H
 
 
-#include <CMapirMOOSApp.h>
+#include <CopenMORAMOOSApp.h>
 #include <mrpt/hwdrivers/CActivMediaRobotBase.h>
 
 
-class CRobotPioneerApp : public CMapirMOOSApp
+class CRobotPioneerApp : public COpenMORAApp
 {
 public:
     CRobotPioneerApp();
