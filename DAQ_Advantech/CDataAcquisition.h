@@ -29,15 +29,14 @@
 #ifndef CDataAcquisition_H
 #define CDataAcquisition_H
 
-#include <mrpt/base.h>
-#include <CMapirMOOSApp.h>
+#include <COpenMORAMOOSApp.h>
 #include <sstream>
 #include <iomanip>
 #include <iostream>
 
 #include "Driver.h"
 
-class CDataAcquisition : public CMapirMOOSApp
+class CDataAcquisition : public COpenMORAApp
 {
 public:
     CDataAcquisition();
