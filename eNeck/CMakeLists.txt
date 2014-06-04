@@ -1,4 +1,4 @@
-PROJECT(Neck)
+PROJECT(eNeck)
 
 # Use MRPT:
 FIND_PACKAGE( MRPT REQUIRED slam gui  hwdrivers ) # hmtslam hwdrivers ... any other sub-library

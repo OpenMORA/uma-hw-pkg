@@ -35,11 +35,11 @@
 #include <sstream>
 #include <iomanip>
 #include <iostream>
+#include <mrpt/system.h>
 
 using namespace std;
 
 using namespace mrpt;
-using namespace mrpt::slam;
 using namespace mrpt::utils;
 
 const int noServos = 3;

@@ -30,14 +30,11 @@
 #define CNeckApp_H
 
 #include <MOOS/libMOOS/App/MOOSApp.h>
-#include <mrpt/hwdrivers.h>
-#include <mrpt/base.h>
+#include <COpenMORAMOOSApp.h>
+#include <mrpt/hwdrivers/CServoeNeck.h>
 
-#include <CMapirMOOSApp.h>
 
-// Any other includes..
-
-class CNeckApp : public CMapirMOOSApp
+class CNeckApp : public COpenMORAApp
 {
 public:
     CNeckApp();
