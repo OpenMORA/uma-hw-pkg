@@ -30,15 +30,14 @@
 #define CLibeliumWSNApp_H
 
 #include <MOOS/libMOOS/App/MOOSApp.h>
-#include <mrpt/hwdrivers.h>
-#include <mrpt/base.h>
-#include <mrpt/utils.h>
-#include <CMapirMOOSApp.h>
+#include <COpenMORAMOOSApp.h>
 #include <mrpt/hwdrivers/CSerialPort.h>
+#include <mrpt/utils/CStringList.h>
+
 
 using namespace mrpt::utils;
 
-class CLibeliumWSNApp : public CMapirMOOSApp
+class CLibeliumWSNApp : public COpenMORAApp
 {
 public:
 	/** Constructor */
@@ -65,7 +64,7 @@ protected:
 	// DATA. Your local variables here...	
 	
 	
-	mrpt::hwdrivers::			CSerialPort mPortZB;
+	mrpt::hwdrivers::CSerialPort mPortZB;
 	//Infomation about COM
 	std::string					m_port_com;
 	int							m_baud;
@@ -74,6 +73,6 @@ protected:
 	int							m_stop_bits;
 	bool						m_flow_control;
 
-	vector<CStringList> waspmotes;
+	std::vector<mrpt::utils::CStringList>			waspmotes;
 };
 #endif
