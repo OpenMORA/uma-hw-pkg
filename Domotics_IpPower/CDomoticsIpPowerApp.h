@@ -29,11 +29,9 @@
 #ifndef CDomoticsIpPowerApp_H
 #define CDomoticsIpPowerApp_H
 
-#include <CMapirMOOSApp.h>
-#include <mrpt/base.h>
-// Any other includes..
+#include <COpenMORAMOOSApp.h>
 
-class CDomoticsIpPowerApp : public CMapirMOOSApp
+class CDomoticsIpPowerApp : public COpenMORAApp
 {
 public:
     CDomoticsIpPowerApp();

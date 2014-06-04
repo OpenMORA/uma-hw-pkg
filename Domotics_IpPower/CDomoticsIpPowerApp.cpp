@@ -33,9 +33,9 @@
 #include <sstream>
 #include <iomanip>
 #include <iostream>
+#include <mrpt/utils.h>
 
 using namespace std;
-
 using namespace mrpt;
 using namespace mrpt::slam;
 using namespace mrpt::utils;
