@@ -125,21 +125,21 @@ bool CRobotPioneerApp::Iterate()
 		odom->encoderLeftTicks = ticks_l;
 		odom->encoderRightTicks = ticks_r;
 
-		string sOdom = ObjectToString( odom.pointer() );
-		//! @moos_publish  ODOMETRY_OBS  The robot absolute odometry as mrpt::slam::CObservationOdometry
-		m_Comms.Notify("ODOMETRY_OBS", sOdom );
-
+		mrpt::vector_byte vec_odom;
+		mrpt::utils::ObjectToOctetVector(odom.pointer(), vec_odom);
+		//!  @moos_publish  ODOMETRY_OBS The robot absolute odometry as mrpt::slam::CObservationOdometry
+		m_Comms.Notify("ODOMETRY_OBS", vec_odom);
 		
 		// Publish battery voltage:
 		mrpt::slam::CObservationBatteryStatePtr battery_obs = mrpt::slam::CObservationBatteryState::Create();
 		battery_obs->timestamp = mrpt::system::now();
 		m_robot.getBatteryCharge(battery_obs->voltageMainRobotBattery);
 		battery_obs->voltageMainRobotBatteryIsValid = true;
-		string sBattery = ObjectToString( battery_obs.pointer() );
-		//! @moos_publish   BATTERY_V   The current battery level of the Mobile Robotic Base in Volts
-		m_Comms.Notify("BATTERY_V", sBattery );
+		mrpt::vector_byte vec_bat;
+		mrpt::utils::ObjectToOctetVector(battery_obs.pointer(), vec_bat);
+		//!  @moos_publish   BATTERY_V   The curent battery level of the Mobile Robotic Base as an mrpt::CObservationBatteryState
+		m_Comms.Notify("BATTERY_V", vec_bat );
 
-		
 		// Publish bumpers state:		
 		mrpt::vector_bool bumper_state;
 		m_robot.getBumpers(bumper_state);

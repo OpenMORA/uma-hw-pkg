@@ -125,7 +125,7 @@ bool CRobotGiraffApp::Iterate()
 		//cout << "Odometry is: " << dist_l << " - " << dist_r << endl;
 
 
-		// Get odometry as Obs:
+		// Get odometry as Obs (Serializable Object):
 		mrpt::slam::CObservationOdometryPtr odom = mrpt::slam::CObservationOdometry::Create();
 		odom->odometry = odo;
 		odom->timestamp = now();
@@ -134,10 +134,12 @@ bool CRobotGiraffApp::Iterate()
 		odom->velocityAng = static_cast<float>(cur_w);
 		odom->hasEncodersInfo = false;
 		odom->encoderLeftTicks = 0;
-		odom->encoderRightTicks = 0;
-		string sOdom = ObjectToString( odom.pointer() );
+		odom->encoderRightTicks = 0;		
+
+		mrpt::vector_byte vec_odom;
+		mrpt::utils::ObjectToOctetVector(odom.pointer(), vec_odom);
 		//!  @moos_publish  ODOMETRY_OBS The robot absolute odometry as mrpt::slam::CObservationOdometry
-		m_Comms.Notify("ODOMETRY_OBS", sOdom );
+		m_Comms.Notify("ODOMETRY_OBS", vec_odom);
 
 
 		//Get Battery Information (charging status, bat level, etc)
@@ -360,9 +362,12 @@ void CRobotGiraffApp::getGiraffBatteryData(bool &isDocked, double &bat_volt)
 			battery_obs->timestamp = now();
 			battery_obs->voltageMainRobotBattery = bat_voltage;
 			battery_obs->voltageMainRobotBatteryIsValid = true;
-			string sBattery = ObjectToString( battery_obs.pointer() );
+			//string sBattery = ObjectToString( battery_obs.pointer() );
+			
+			mrpt::vector_byte vec_bat;
+			mrpt::utils::ObjectToOctetVector(battery_obs.pointer(), vec_bat);
 			//!  @moos_publish   BATTERY_V   The curent battery level of the Mobile Robotic Base as an mrpt::CObservationBatteryState
-			m_Comms.Notify("BATTERY_V", sBattery );
+			m_Comms.Notify("BATTERY_V", vec_bat );
 		}
 	}
 	else
