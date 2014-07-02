@@ -77,7 +77,7 @@ bool CRobotGiraffApp::OnStartUp()
 		control_mode = 0;
 		size_t giraffMode = 0;
 		pointer_motors->execute("setMode", &giraffMode);
-		MOOSDebugWrite("Giraff Starts with Control (Manual mode)\n");
+		MOOSDebugWrite("Starts with Control (Manual mode)\n");
 		Is_Charging = 99;	//incorrect value to force publishing
 		return DoRegistrations();
 }
@@ -105,7 +105,7 @@ bool CRobotGiraffApp::Iterate()
 		//cout << endl << "Iteration time: " << m_clock.Tac();
 		m_clock.Tic();
 
-		//Check the control mode (Manual=Pilot= 0, or autonomous=OpenMORA= 2)		
+		//Check the control mode (Manual=Pilot= 0, or autonomous=OpenMORA= 2)
 		if (control_mode == 2)
 		{
 			setGiraffVelocities(m_last_v,m_last_w);		
@@ -178,9 +178,9 @@ bool CRobotGiraffApp::DoRegistrations()
 	AddMOOSVariable( "SHUTDOWN", "SHUTDOWN", "SHUTDOWN", 0);
 	//this->m_Comms.Register("SHUTDOWN",0);
 		
-	//! @moos_subscribe GIRAFF_CONTROL_MODE
-	AddMOOSVariable( "GIRAFF_CONTROL_MODE", "GIRAFF_CONTROL_MODE", "GIRAFF_CONTROL_MODE", 0 );
-	//this->m_Comms.Register("GIRAFF_CONTROL_MODE",0);
+	//! @moos_subscribe ROBOT_CONTROL_MODE
+	AddMOOSVariable( "ROBOT_CONTROL_MODE", "ROBOT_CONTROL_MODE", "ROBOT_CONTROL_MODE", 0 );
+	//this->m_Comms.Register("ROBOT_CONTROL_MODE",0);
 	
 	RegisterMOOSVariables();
     return true;
@@ -202,7 +202,7 @@ bool CRobotGiraffApp::OnNewMail(MOOSMSG_LIST &NewMail)
             m_last_w = m.GetDouble();
 		
 		// Giraff Control
-		if (MOOSStrCmp(m.GetKey(),"GIRAFF_CONTROL_MODE"))
+		if (MOOSStrCmp(m.GetKey(),"ROBOT_CONTROL_MODE"))
 		{
 			control_mode = size_t(m.GetDouble());
 			if (control_mode == 2)	//openMORA-Auto
