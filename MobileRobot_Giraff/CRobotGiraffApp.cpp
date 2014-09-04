@@ -168,20 +168,20 @@ bool CRobotGiraffApp::DoRegistrations()
 {
 	//! @moos_subscribe MOTION_CMD_V
 	AddMOOSVariable( "MOTION_CMD_V", "MOTION_CMD_V", "MOTION_CMD_V", 0);
-    //this->m_Comms.Register("MOTION_CMD_V",0);
-
+    
 	//! @moos_subscribe MOTION_CMD_W    
 	AddMOOSVariable( "MOTION_CMD_W", "MOTION_CMD_W", "MOTION_CMD_W", 0);
-	//this->m_Comms.Register("MOTION_CMD_W",0);
-
+	
 	//! @moos_subscribe SHUTDOWN	
 	AddMOOSVariable( "SHUTDOWN", "SHUTDOWN", "SHUTDOWN", 0);
-	//this->m_Comms.Register("SHUTDOWN",0);
 		
 	//! @moos_subscribe ROBOT_CONTROL_MODE
 	AddMOOSVariable( "ROBOT_CONTROL_MODE", "ROBOT_CONTROL_MODE", "ROBOT_CONTROL_MODE", 0 );
-	//this->m_Comms.Register("ROBOT_CONTROL_MODE",0);
 	
+	//! @moos_subscribe TILT_GET_ANGLE_FROM_HOME, TILT_SET_ANGLE_FROM_HOME
+	AddMOOSVariable( "TILT_GET_ANGLE_FROM_HOME", "TILT_GET_ANGLE_FROM_HOME", "TILT_GET_ANGLE_FROM_HOME", 0 );
+	AddMOOSVariable( "TILT_SET_ANGLE_FROM_HOME", "TILT_SET_ANGLE_FROM_HOME", "TILT_SET_ANGLE_FROM_HOME", 0 );
+
 	RegisterMOOSVariables();
     return true;
 }
@@ -223,6 +223,30 @@ bool CRobotGiraffApp::OnNewMail(MOOSMSG_LIST &NewMail)
 			}
 		}
 		
+		// Get Tilt
+	    if (MOOSStrCmp(m.GetKey(),"TILT_GET_ANGLE_FROM_HOME") )
+		{
+			double current_angle;
+			pointer_motors->execute("getTiltAngleFromHome", &current_angle);
+
+			//! @moos_publish TILT_CURRENT_ANGLE_FROM_HOME: The current tilt angle (degress) of the robot's screen
+			m_Comms.Notify("TILT_CURRENT_ANGLE_FROM_HOME", current_angle);
+		}
+
+		//Set new tilt
+		if (MOOSStrCmp(m.GetKey(),"TILT_SET_ANGLE_FROM_HOME") )
+		{
+			double new_angle = m.GetDouble();
+			pointer_motors->execute("setTiltAngleFromHome", &new_angle );
+
+			//update Current angle
+			double current_angle;
+			pointer_motors->execute("getTiltAngleFromHome", &current_angle);
+			//! @moos_publish TILT_CURRENT_ANGLE_FROM_HOME: The current tilt angle (degress) of the robot's screen
+			m_Comms.Notify("TILT_CURRENT_ANGLE_FROM_HOME", current_angle);
+		}
+    
+
 		// ShutDown
 		if( (MOOSStrCmp(m.GetKey(),"SHUTDOWN")) && (MOOSStrCmp(m.GetString(),"true")) )
 			this->RequestQuit();		
