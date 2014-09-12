@@ -909,12 +909,26 @@ bool CGiraffMotorsCom::getChargerData( string &response )
 {
 	//NAV_TRY
 	
-	string command("get charger_data");		
+	string command("get charger_data");
+	//string command("get button_data");
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
-	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
+	if ( ( !transmit(command) ) || (!receive(response)) )
+	{
+		printf("[CGiraffMotorsCom: getChargerData]: Error transmitting or receiving!\n");
+		return false;
+	}
 
-	return true;	
+	if( (response == "") || (response == "empty") )
+	{
+		printf("[CGiraffMotorsCom: getChargerData]: Error receiving charger_data. Response is EMPTY!\n");
+		return false;
+	}
+	else
+	{
+		//printf("[CGiraffMotorsCom: getChargerData]: response is = %s\n",response.c_str());
+		return true;
+	}
 
 	//NAV_CATCH_MODULE("In method getChargerData method")
 
@@ -956,7 +970,7 @@ bool CGiraffMotorsCom::transmit( string &command )
 	command.append("|");
 	string str;
 	size_t written = m_comms->write( command );
-	//cout << "[CGiraffMotorsCom]: Command written is: " << command << endl;
+	//printf("[CGiraffMotorsCom]: Command written is: %s\n",command.c_str());
 	str=mrpt::format("Tx: %s time: %s \n",command.c_str(),MOOSGetTimeStampString().c_str());
 	logFile.write(str.c_str(),str.size());
  // myfile.close();
@@ -991,7 +1005,7 @@ bool CGiraffMotorsCom::receive(string &response)
 	}
 	//writeDebugLine(format("Response: %s",response.c_str()),MOTORS);
 	
-	//cout << endl << "[CGiraffMotorsCom]: Response: " << response << endl;
+	//printf("[CGiraffMotorsCom]: Response: %s\n",response.c_str());
 
 	// Readget w OK> prompted message
 	string OK;

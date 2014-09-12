@@ -145,7 +145,7 @@ bool CRobotGiraffApp::Iterate()
 		//Get Battery Information (charging status, bat level, etc)
 		bool isDocked;
 		double bat_volt;
-		getGiraffBatteryData(isDocked, bat_volt);		
+		getGiraffBatteryData(isDocked, bat_volt);
 
 		return true;
     }
@@ -330,7 +330,7 @@ void CRobotGiraffApp::getGiraffBatteryData(bool &isDocked, double &bat_volt)
 	std::string bat_data;
 	if (pointer_motors->execute("getChargerData", &bat_data))
 	{
-		//cout << "BATTERY string: " << bat_data << endl;
+		//printf("[CRobotGiraffApp]: BATTERY string: %s\n",bat_data.c_str());
 
 		/* Charger Status value: S:S#ABCD
 		 * D=0 fast charging, D=1 Trickle charging, D=2 Error, D=3 Init, D=4 Not docked	 */
@@ -338,7 +338,8 @@ void CRobotGiraffApp::getGiraffBatteryData(bool &isDocked, double &bat_volt)
 		std::string charge_status = bat_data.substr(0, pos);
 		bat_data.erase(0, pos+1);
 		double ch = atof( &(charge_status.back()) );
-		//cout << "Charger status is: " << ch << endl;
+		
+		//printf("[CRobotGiraffApp]: Charger status is: %.1f\n",ch);
 		ch = (ch<2);	//D=0 o 1 -> Charging
 		if (ch != Is_Charging)
 		{
@@ -379,7 +380,7 @@ void CRobotGiraffApp::getGiraffBatteryData(bool &isDocked, double &bat_volt)
 			ss << std::hex << parameter_value;
 			ss >> x;
 			float bat_voltage = reinterpret_cast<float&>(x);
-			printf("Battery voltage is: %.2f V\n", bat_voltage);			
+			printf("[CRobotGiraffApp]: Battery voltage is: %.2f V\n", bat_voltage);			
 			
 			//Publish
 			mrpt::slam::CObservationBatteryStatePtr battery_obs = mrpt::slam::CObservationBatteryState::Create();
