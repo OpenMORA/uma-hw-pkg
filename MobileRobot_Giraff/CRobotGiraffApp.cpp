@@ -127,6 +127,7 @@ bool CRobotGiraffApp::Iterate()
 
 		// Get odometry as Obs (Serializable Object):
 		mrpt::slam::CObservationOdometryPtr odom = mrpt::slam::CObservationOdometry::Create();
+		odom->sensorLabel = "ODOMETRY";
 		odom->odometry = odo;
 		odom->timestamp = now();
 		odom->hasVelocities = true;
@@ -393,6 +394,10 @@ void CRobotGiraffApp::getGiraffBatteryData(bool &isDocked, double &bat_volt)
 			mrpt::utils::ObjectToOctetVector(battery_obs.pointer(), vec_bat);
 			//!  @moos_publish   BATTERY_V   The curent battery level of the Mobile Robotic Base as an mrpt::CObservationBatteryState
 			m_Comms.Notify("BATTERY_V", vec_bat );
+
+			//Publish the battery as float for MQTT/Status and SessionLogger
+			//!  @moos_publish   BATTERY_V_FLOAT   The curent battery level of the Mobile Robotic Base as float
+			m_Comms.Notify("BATTERY_V_FLOAT", bat_voltage );
 		}
 	}
 	else
