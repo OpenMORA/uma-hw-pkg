@@ -26,7 +26,10 @@
    |                                                                           |
    +---------------------------------------------------------------------------+ */
 
-/**  @moos_module Interface to a Data AQuisition Board (DAQ) from Advantech (USB4711A, etc). */
+/**  @moos_module Interface to a Data AQuisition Board (DAQ) from Advantech (USB4711A, etc).
+  *  Used to read the voltage and input/output currents from the main battery of the robot
+  *  (Useful when this info is not provided by the robot base, or when aditional batteries are equipped)
+  */
 
 #include "CDataAcquisition.h"
 
@@ -120,7 +123,6 @@ bool CDataAcquisition::Iterate()
 		//-------------------------------------
 		// Configure Input Range
 		//------------------------------------
-
 		ptAIConfig.DasChan = Chan;// The sampled channel
 		ptAIConfig.DasGain = Gain;// Gain Code: Refer to hardware manual for Code Range
 
@@ -137,7 +139,6 @@ bool CDataAcquisition::Iterate()
 		//-------------------------------------
 		// Read One Data
 		//------------------------------------
-
 		ptAIVoltageIn.chan = Chan;	// The sampled channel
 		ptAIVoltageIn.gain = Gain;	// Gain Code: Refer to hardware manual for Code Range	
 		ptAIVoltageIn.TrigMode = TrigMode;	// Trigger Mode, 0: internal trigger, 1:external trigger
@@ -156,18 +157,16 @@ bool CDataAcquisition::Iterate()
 		//-------------------------------------
 		// Display reading data
 		//------------------------------------
-
 		//!  @moos_publish   Volt1  Voltage measurement of differential channel 1 (Units = Volts)
 		m_Comms.Notify("Volt1", fVoltage);	
 
-	break;
+		break;
 
 	case 1: // Multiple Inputs Mode
 
 		//-------------------------------------
 		// Configure Input Range
-		//------------------------------------	
-
+		//------------------------------------
 		std::fill_n(GainArray,4,Gain); 
 
 		ptMAIConfig.NumChan = 4; // Number of logical channel(s)
@@ -192,7 +191,6 @@ bool CDataAcquisition::Iterate()
 		//-------------------------------------
 		// Read Data
 		//------------------------------------
-
 		dwErrCde = DRV_MAIVoltageIn(m_DriverHandle, &ptMAIVoltageIn); //Reads multiple analog input channels and returns the results scaled to voltages (units = volts) 
 
 		if (dwErrCde != SUCCESS) // Error Checking
@@ -206,20 +204,19 @@ bool CDataAcquisition::Iterate()
 		//-------------------------------------
 		// Display reading data
 		//------------------------------------ 
+		//!  @moos_publish   DAQ_VOLT1  Voltage measurement of differential channel 1 (Units = Volts) from the Data AQuisition Board
+		m_Comms.Notify("DAQ_VOLT1", fVoltageArray[0] );
 
-		//!  @moos_publish   Volt1  Voltage measurement of differential channel 1 (Units = Volts)
-		m_Comms.Notify("Volt1", fVoltageArray[0] );
+		//!  @moos_publish   DAQ_VOLT2  Voltage measurement of differential channel 2 (Units = Volts) from the Data AQuisition Board
+		m_Comms.Notify("DAQ_VOLT2", fVoltageArray[1] );
 
-		//!  @moos_publish   Volt2  Voltage measurement of differential channel 2 (Units = Volts)
-		m_Comms.Notify("Volt2", fVoltageArray[1] );
+		//!  @moos_publish   DAQ_VOLT3  Voltage measurement of differential channel 3 (Units = Volts) from the Data AQuisition Board
+		m_Comms.Notify("DAQ_VOLT3", fVoltageArray[2] );
 
-		//!  @moos_publish   Volt3  Voltage measurement of differential channel 3 (Units = Volts)
-		m_Comms.Notify("Volt3", fVoltageArray[2] );
-
-		//!  @moos_publish   Volt4  Voltage measurement of differential channel 4 (Units = Volts)
-		m_Comms.Notify("Volt4", fVoltageArray[3] );
-
-	break;
+		//!  @moos_publish   DAQ_VOLT4  Voltage measurement of differential channel 4 (Units = Volts) from the Data AQuisition Board
+		m_Comms.Notify("DAQ_VOLT4", fVoltageArray[3] );
+		printf(".");
+		break;
 	}
 
 	return true; 
