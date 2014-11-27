@@ -53,6 +53,7 @@ namespace NAAS
 		double m_vel;	//!< Current velocity.
 		double m_w;  //!<Current angular velocity
 		std::ofstream logFile;
+		bool Save_logfile;
 
 		mrpt::synch::CCriticalSection semaphore; //!< Semaphore for ensuring data consistency
 
@@ -82,6 +83,10 @@ namespace NAAS
 		 */
 		bool CGiraffMotorsCom::executeGiraffCommand( std::string &command, std::string &response );
 		
+		/** Indicates wheter or not save a log file */
+		void set_SaveLogfile(bool logfile_option);
+		void saveToLogfile(std::string str);
+
 		/** Get the robot acceleration */
 		//bool getAcceleration( double &acc );
 

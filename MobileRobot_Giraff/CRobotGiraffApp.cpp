@@ -71,6 +71,11 @@ bool CRobotGiraffApp::OnStartUp()
 {
 		//! @moos_param Accel_limit The maximum acceleration to be achieved.
 		m_accel_limit = m_ini.read_double("","Accel_limit", 3.0, false);
+
+		//! @moos_param Save_logfile Wheter or not to save a logFile with debuf information
+		Save_logfile = m_ini.read_bool("","Save_logfile", false, false);
+		pointer_motors->set_SaveLogfile(Save_logfile);
+		
 		m_clock.Tic();
 		
 		//By default start with Manual Mode
@@ -122,7 +127,7 @@ bool CRobotGiraffApp::Iterate()
 		odo.asString(sOdo);
 		//!  @moos_publish ODOMETRY The robot absolute odometry in the format "[x y phi]"
 		m_Comms.Notify("ODOMETRY", sOdo );
-		//cout << "Odometry is: " << dist_l << " - " << dist_r << endl;
+		cout << "[CRobotGiraffApp]: Odometry is: " << dist_l << " - " << dist_r << endl;
 
 
 		// Get odometry as Obs (Serializable Object):
@@ -346,11 +351,11 @@ void CRobotGiraffApp::getGiraffBatteryData(bool &isDocked, double &bat_volt)
 		{
 			Is_Charging = ch;
 			//! @moos_publish Is_Charging: The current charging status: 0 The battery is not charging, 1 The battery is charging
-			m_Comms.Notify("Is_Charging", Is_Charging);
+			m_Comms.Notify("BATTERY_IS_CHARGING", Is_Charging);
 			if (ch)
-				cout << "[CRobotGiraffApp]: Battery IS Charging" << endl;
+				cout << "[CRobotGiraffApp]: Robot is now Charging its battery" << endl;
 			else
-				cout << "[CRobotGiraffApp]: Battery NOT Charging" << endl;
+				cout << "[CRobotGiraffApp]: Robot is not longer Charging its battery" << endl;
 		}
 		
 				
@@ -381,15 +386,13 @@ void CRobotGiraffApp::getGiraffBatteryData(bool &isDocked, double &bat_volt)
 			ss << std::hex << parameter_value;
 			ss >> x;
 			float bat_voltage = reinterpret_cast<float&>(x);
-			printf("[CRobotGiraffApp]: Battery voltage is: %.2f V\n", bat_voltage);			
+			//printf("[CRobotGiraffApp]: Battery voltage is: %.2f V\n", bat_voltage);			
 			
 			//Publish
 			mrpt::slam::CObservationBatteryStatePtr battery_obs = mrpt::slam::CObservationBatteryState::Create();
 			battery_obs->timestamp = now();
 			battery_obs->voltageMainRobotBattery = bat_voltage;
-			battery_obs->voltageMainRobotBatteryIsValid = true;
-			//string sBattery = ObjectToString( battery_obs.pointer() );
-			
+			battery_obs->voltageMainRobotBatteryIsValid = true;						
 			mrpt::vector_byte vec_bat;
 			mrpt::utils::ObjectToOctetVector(battery_obs.pointer(), vec_bat);
 			//!  @moos_publish   BATTERY_V   The curent battery level of the Mobile Robotic Base as an mrpt::CObservationBatteryState
@@ -401,5 +404,7 @@ void CRobotGiraffApp::getGiraffBatteryData(bool &isDocked, double &bat_volt)
 		}
 	}
 	else
-		cout << "[CRobotGiraffApp]: ERROR reading battery data from Giraff" << endl;
+	{
+		//cout << "[CRobotGiraffApp]: ERROR reading battery data from Giraff" << endl;
+	}
 }

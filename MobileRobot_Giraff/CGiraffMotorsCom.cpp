@@ -30,9 +30,7 @@ using namespace mrpt::utils;
 CGiraffMotorsCom::CGiraffMotorsCom( const bool &simulated )
 	: m_vel(0), m_simulated(simulated)
 {
-	  
-	logFile.open ("logFile.txt");
-
+	Save_logfile = false;		//default
 	init();
 }
 
@@ -636,7 +634,7 @@ bool CGiraffMotorsCom::getTiltAngleFromHome( double &angle )
 bool CGiraffMotorsCom::setTiltAngleFromHome( const double &angle )
 {
 	//NAV_TRY
-
+	cout << "[GiraffMotors: SetTiltAngleFromHome]: new angle is = " << angle << "deg" << endl;
 	string command( mrpt::format( "set tilt_angle_from_home %f", angle ) );
 	string response;
 
@@ -921,7 +919,7 @@ bool CGiraffMotorsCom::getChargerData( string &response )
 
 	if( (response == "") || (response == "empty") )
 	{
-		printf("[CGiraffMotorsCom: getChargerData]: Error receiving charger_data. Response is EMPTY!\n");
+		//printf("[CGiraffMotorsCom: getChargerData]: Error receiving charger_data. Response is EMPTY!\n");
 		return false;
 	}
 	else
@@ -944,7 +942,7 @@ bool CGiraffMotorsCom::quit()
 	//NAV_TRY
 	
 	string command( "q" );
-	string response;
+	string response;	
 	logFile.close();
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
@@ -965,20 +963,24 @@ bool CGiraffMotorsCom::quit()
 bool CGiraffMotorsCom::transmit( string &command ) 
 {
 	//NAV_TRY
-
 	// '|' character is used as command delimiter
-	command.append("|");
-	string str;
+	command.append("|");	
 	size_t written = m_comms->write( command );
 	//printf("[CGiraffMotorsCom]: Command written is: %s\n",command.c_str());
-	str=mrpt::format("Tx: %s time: %s \n",command.c_str(),MOOSGetTimeStampString().c_str());
-	logFile.write(str.c_str(),str.size());
- // myfile.close();
-	if (!written){
-		str=mrpt::format("Command could not be written \n");
-			logFile.write(str.c_str(),str.size());	
+	
+	//Save to logFile
+	string str = mrpt::format("Tx: %s time: %s \n",command.c_str(),MOOSGetTimeStampString().c_str());
+	saveToLogfile(str);
+	
+	// Error?
+	if(!written)
+	{
+		//Save to logfile
+		string str = mrpt::format("Command could not be written \n");
+		saveToLogfile(str);
 		return false;
-	}	
+	}
+		
 	return true;
 
 	//NAV_CATCH_MODULE("In transmit method")
@@ -996,28 +998,25 @@ bool CGiraffMotorsCom::receive(string &response)
 
 	// Read response
 	string str;
-	if (!m_comms->read( response ))
+	if( !m_comms->read( response ) )
 	{
 		printf("\nCommand could not be received.\n");
-		str=mrpt::format("Command could not be received. time: %s \n",MOOSGetTimeStampString().c_str());
-		logFile.write(str.c_str(),str.size());	
+		str = mrpt::format("Command could not be received. time: %s \n",MOOSGetTimeStampString().c_str());
+		saveToLogfile(str);
 		return false;	
 	}
-	//writeDebugLine(format("Response: %s",response.c_str()),MOTORS);
-	
+	//writeDebugLine(format("Response: %s",response.c_str()),MOTORS);	
 	//printf("[CGiraffMotorsCom]: Response: %s\n",response.c_str());
 
 	// Readget w OK> prompted message
 	string OK;
 	m_comms->read( OK );
-	str=mrpt::format("Rx: %s time: %s\n",OK.c_str(),MOOSGetTimeStampString().c_str());
-	logFile.write(str.c_str(),str.size());
+	str = mrpt::format("Rx: %s time: %s\n",OK.c_str(),MOOSGetTimeStampString().c_str());
+	saveToLogfile(str);
 	return true;
 
 	//NAV_CATCH_MODULE("In receive method")
-
 	//return false;
-
 }
 
 
@@ -1070,3 +1069,20 @@ bool CGiraffMotorsCom::testSpeed()
 
 }
 
+
+/** Indicates wheter or not save a log file */
+void CGiraffMotorsCom::set_SaveLogfile(bool logfile_option)
+{
+	Save_logfile = logfile_option;	
+}
+
+
+void CGiraffMotorsCom::saveToLogfile(std::string str)
+{
+	if( Save_logfile )
+	{
+		logFile.open("logFile.txt",std::fstream::app);	//Open logfile in Append mode
+		logFile.write(str.c_str(),str.size());
+		logFile.close();
+	}
+}

@@ -47,6 +47,7 @@ public:
 		NAAS::CGiraffMotorsCom* pointer_motors;
 		std::string test_command;
 		bool first;
+		bool Save_logfile;
 		mrpt::poses::CPose2D m_odo;
 		mrpt::system::TTimeStamp m_time_odo;
 		double m_left, m_right, m_absoluteX, m_absoluteY, m_orientation,m_b;
