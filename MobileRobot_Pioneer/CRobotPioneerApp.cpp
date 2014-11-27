@@ -99,7 +99,8 @@ bool CRobotPioneerApp::Iterate()
 		//cout << "[robot_pioneer] cmd_v=" << cmd_v << " cmd_w=" << RAD2DEG(cmd_w) << endl;
 		m_robot.setVelocities(m_last_v,m_last_w);
 
-		// Publish odometry:
+		// PUBLISH ODOMETRY
+		//------------------
 		CPose2D  odo;
 		double cur_v,cur_w;
 		int64_t  ticks_l,ticks_r;
@@ -130,17 +131,24 @@ bool CRobotPioneerApp::Iterate()
 		//!  @moos_publish  ODOMETRY_OBS The robot absolute odometry as mrpt::slam::CObservationOdometry
 		m_Comms.Notify("ODOMETRY_OBS", vec_odom);
 		
-		// Publish battery voltage:
+
+		// Publish BASE BATTERY VOLTAGE:
+		//-------------------------------
 		mrpt::slam::CObservationBatteryStatePtr battery_obs = mrpt::slam::CObservationBatteryState::Create();
 		battery_obs->timestamp = mrpt::system::now();
-		m_robot.getBatteryCharge(battery_obs->voltageMainRobotBattery);
+		m_robot.getRealBatteryCharge(battery_obs->voltageMainRobotBattery);
 		battery_obs->voltageMainRobotBatteryIsValid = true;
 		mrpt::vector_byte vec_bat;
 		mrpt::utils::ObjectToOctetVector(battery_obs.pointer(), vec_bat);
 		//!  @moos_publish   BATTERY_V   The curent battery level of the Mobile Robotic Base as an mrpt::CObservationBatteryState
 		m_Comms.Notify("BATTERY_V", vec_bat );
 
-		// Publish bumpers state:		
+		//Publish the battery as float for MQTT/Status and SessionLogger
+		//!  @moos_publish   BATTERY_V_FLOAT   The curent battery level of the Mobile Robotic Base as float
+		m_Comms.Notify("BATTERY_V_FLOAT", battery_obs->voltageMainRobotBattery );
+				
+		// PUBISH BUMPERS STATE:
+		//----------------------
 		mrpt::vector_bool bumper_state;
 		m_robot.getBumpers(bumper_state);
 		string bumper_str="";
@@ -161,8 +169,7 @@ bool CRobotPioneerApp::Iterate()
 		if (!alert && first_alert) {m_robot.EnableMotors();first_alert=false;}
 		
 		//!  @moos_publish   BUMPERS  The state of front and read bumpers (1 pressed /0 unpressed) of the Mobile Robotic Base
-		m_Comms.Notify("FBUMPERS",bumper_str.substr(5,9));
-	
+		m_Comms.Notify("FBUMPERS",bumper_str.substr(5,9));	
 
 	    return true;
     }
