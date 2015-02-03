@@ -38,7 +38,7 @@
 #include <sstream>
 #include <iomanip>
 #include <iostream>
-#include <mrpt/slam/CObservationOdometry.h>
+#include <mrpt/obs/CObservationOdometry.h>
 #include <mrpt/slam/CObservationBatteryState.h>
 
 using namespace std;
@@ -123,16 +123,10 @@ bool CRobotGiraffApp::Iterate()
 		CPose2D  odo;
 		double cur_v, cur_w, dist_l, dist_r;
 		getGiraffOdometryFull( odo, cur_v, cur_w, dist_l, dist_r);
-		string sOdo;
-		odo.asString(sOdo);
-		//!  @moos_publish ODOMETRY The robot absolute odometry in the format "[x y phi]"
-		m_Comms.Notify("ODOMETRY", sOdo );
-		cout << "[CRobotGiraffApp]: Odometry is: " << dist_l << " - " << dist_r << endl;
-
-
+		
 		// Get odometry as Obs (Serializable Object):
-		mrpt::slam::CObservationOdometryPtr odom = mrpt::slam::CObservationOdometry::Create();
-		odom->sensorLabel = "ODOMETRY";
+		mrpt::obs::CObservationOdometryPtr odom = mrpt::obs::CObservationOdometry::Create();
+		odom->sensorLabel = "ODOMETRY_BASE";
 		odom->odometry = odo;
 		odom->timestamp = now();
 		odom->hasVelocities = true;
@@ -140,12 +134,11 @@ bool CRobotGiraffApp::Iterate()
 		odom->velocityAng = static_cast<float>(cur_w);
 		odom->hasEncodersInfo = false;
 		odom->encoderLeftTicks = 0;
-		odom->encoderRightTicks = 0;		
-
+		odom->encoderRightTicks = 0;
 		mrpt::vector_byte vec_odom;
 		mrpt::utils::ObjectToOctetVector(odom.pointer(), vec_odom);
-		//!  @moos_publish  ODOMETRY_OBS The robot absolute odometry as mrpt::slam::CObservationOdometry
-		m_Comms.Notify("ODOMETRY_OBS", vec_odom);
+		//!  @moos_publish  ODOMETRY_OBS_BASE The robot absolute odometry as mrpt::obs::CObservationOdometry
+		m_Comms.Notify("ODOMETRY_OBS_BASE", vec_odom);
 
 
 		//Get Battery Information (charging status, bat level, etc)

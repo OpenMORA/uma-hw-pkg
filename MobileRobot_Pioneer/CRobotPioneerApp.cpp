@@ -37,7 +37,7 @@
 #include <sstream>
 #include <iomanip>
 #include <iostream>
-#include <mrpt/slam/CObservationOdometry.h>
+#include <mrpt/obs/CObservationOdometry.h>
 #include <mrpt/slam/CObservationBatteryState.h>
 #include <mrpt/system/datetime.h>
 
@@ -109,15 +109,10 @@ bool CRobotPioneerApp::Iterate()
 			cur_v,cur_w,
 			ticks_l, ticks_r);
 
-		string sOdo;
-		odo.asString(sOdo);
-		//! @moos_publish   ODOMETRY   The robot absolute odometry in the format "[x y phi]"
-		m_Comms.Notify("ODOMETRY", sOdo );
-
-		
 		// Publish complete odometry as CObservation:
-		mrpt::slam::CObservationOdometryPtr odom = mrpt::slam::CObservationOdometry::Create();
+		mrpt::obs::CObservationOdometryPtr odom = mrpt::obs::CObservationOdometry::Create();
 		odom->odometry = odo;
+		odom->sensorLabel = "ODOMETRY_BASE";
 		odom->timestamp = mrpt::system::now();
 		odom->hasVelocities = true;
 		odom->velocityLin = cur_v;
@@ -128,8 +123,8 @@ bool CRobotPioneerApp::Iterate()
 
 		mrpt::vector_byte vec_odom;
 		mrpt::utils::ObjectToOctetVector(odom.pointer(), vec_odom);
-		//!  @moos_publish  ODOMETRY_OBS The robot absolute odometry as mrpt::slam::CObservationOdometry
-		m_Comms.Notify("ODOMETRY_OBS", vec_odom);
+		//!  @moos_publish  ODOMETRY_OBS_BASE The robot absolute odometry as mrpt::obs::CObservationOdometry
+		m_Comms.Notify("ODOMETRY_OBS_BASE", vec_odom);
 		
 
 		// Publish BASE BATTERY VOLTAGE:
