@@ -1,4 +1,4 @@
-	
+
 	/*---------------------------------------------------------------
 	|					NAAS Control Architecture					|
 	|																|
@@ -27,7 +27,7 @@
 namespace NAAS
 {
 
-	/** MotorsCom class: Implements all the possible commands to send to the 
+	/** MotorsCom class: Implements all the possible commands to send to the
 	  *		wheels motors controler.
 	  */
 	class CGiraffMotorsCom
@@ -60,29 +60,29 @@ namespace NAAS
 		CGiraffCommunication* m_comms;	//!< Pointer to a CGiraffCommunication object for data exchange
 
 	public:
-		
+
 		/** Constructor.
 		  * \param simulated if the motors communication is simulated.
 		  */
 		CGiraffMotorsCom( const bool &simulated = false );
 
 		/** Destructor */
-		~CGiraffMotorsCom();		
+		~CGiraffMotorsCom();
 
 		/** Excute a command.
 		  * \param command command to execute.
 		  * \param param1 extra paramter maybe needed for the command to execute.
 		  * \param param2 extra paramter maybe needed for the command to execute.
 		  * \param param3 extra paramter maybe needed for the command to execute.
-		  * \return true if any error occurred. 
+		  * \return true if any error occurred.
  		  */
-		bool execute( const std::string &command, void *param1=NULL, 
+		bool execute( const std::string &command, void *param1=NULL,
 				void *param2=NULL, void *param3=NULL );
 		/** Excute a command received from Giraff SW.
-		 * \param command-> a String with the whole command from Giraff SW("set p...","set v...")			
+		 * \param command-> a String with the whole command from Giraff SW("set p...","set v...")
 		 */
-		bool CGiraffMotorsCom::executeGiraffCommand( std::string &command, std::string &response );
-		
+		bool executeGiraffCommand( std::string &command, std::string &response );
+
 		/** Indicates wheter or not save a log file */
 		void set_SaveLogfile(bool logfile_option);
 		void saveToLogfile(std::string str);
@@ -112,10 +112,10 @@ namespace NAAS
 		  */
 		bool setVel( const double &vel,const unsigned int &mode );
 		/** Get the robot acceleration */
-		
-		bool getAcceleration( double &acc ); 
+
+		bool getAcceleration( double &acc );
 		/** Set the robot acceleration */
-		
+
 		bool setAcceleration( const double &acc ) ;
 		/** Get the current radius */
 		bool getRadius( double &radius );
@@ -174,7 +174,7 @@ namespace NAAS
 
 		/** Ends the communication with the term application. To test. */
 		bool quit();
-		
+
 		/** Transmit a command */
 		bool transmit( std::string &command );
 

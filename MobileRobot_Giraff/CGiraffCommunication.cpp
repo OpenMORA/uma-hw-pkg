@@ -1,4 +1,4 @@
-	
+
 	/*---------------------------------------------------------------
 	|					NAAS Control Architecture					|
 	|																|
@@ -17,6 +17,7 @@
 
 #include "CGiraffCommunication.h"
 #include <iostream>
+#include <cstdio>
 #include <mrpt/system/os.h>
 
 using namespace NAAS;
@@ -29,8 +30,8 @@ using namespace std;
 //-----------------------------------------------------------
 
 CGiraffCommunication::CGiraffCommunication()
-{	
-	
+{
+
 	init();
 
 	//writeDebugLine("Object well initialized",COMMUNICATION);
@@ -89,7 +90,7 @@ bool CGiraffCommunication::run()
 	{
 		//writeDebugLine(format("Waiting external connection to ip:%s port:%u ...", m_ip.c_str(), m_port),COMMUNICATION);
 		printf("Waiting external connection to ip:%s port:%u ...\n", m_ip.c_str(), m_port);
-		socket = srvSocket->accept();		
+		socket = srvSocket->accept();
 		if( socket==NULL)
 			printf("Connection not OK");
 		socket->setTCPNoDelay(1);
@@ -118,15 +119,15 @@ bool CGiraffCommunication::write(const std::string &str)
 	//NAV_TRY
 
 	char buf[128];
-	mrpt::system::os::sprintf( buf, 128, str.c_str() );
+	mrpt::system::os::sprintf(buf, 128, "%s", str.c_str() );
 	unsigned short toSend = str.length();
 
-	socket->WriteBuffer( buf, toSend ); 
+	socket->WriteBuffer( buf, toSend );
 
 	//writeDebugLine( format("Writed: %s",string(buf).c_str()), COMMUNICATION );
 
 	//socket.ReadBuffer( buf2, 5 );
-	
+
 	return true;
 
 	//NAV_CATCH_MODULE("In write method")
@@ -145,7 +146,7 @@ bool CGiraffCommunication::read(std::string &read)
 
 	if (socket->getline( read ))
 	{
-		//writeDebugLine(format("Readed: %s", read.c_str()),COMMUNICATION); 
+		//writeDebugLine(format("Readed: %s", read.c_str()),COMMUNICATION);
 		//cout << "[CGiraffCommunication-read]: Readed line: " << read << endl;
 		return true;
 	}
@@ -181,7 +182,7 @@ bool CGiraffCommunication::readVariousLines(vector<std::string> &read, const siz
 	{
 		if (socket->getline( read[i_line] ))
 		{
-			//writeDebugLine(format("Readed: %s", read[i_line].c_str()),COMMUNICATION); 
+			//writeDebugLine(format("Readed: %s", read[i_line].c_str()),COMMUNICATION);
 			return true;
 		}
 		else

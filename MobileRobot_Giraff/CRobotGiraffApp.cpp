@@ -49,7 +49,7 @@ using namespace mrpt::poses;
 
 
 /** Constructor*/
-CRobotGiraffApp::CRobotGiraffApp() 
+CRobotGiraffApp::CRobotGiraffApp()
 {
 		pointer_motors= new NAAS::CGiraffMotorsCom(false);
 		m_b = 0.467;
@@ -63,7 +63,7 @@ CRobotGiraffApp::CRobotGiraffApp()
 
 /** Destructor*/
 CRobotGiraffApp::~CRobotGiraffApp()
-{	
+{
 }
 
 
@@ -75,9 +75,9 @@ bool CRobotGiraffApp::OnStartUp()
 		//! @moos_param Save_logfile Wheter or not to save a logFile with debuf information
 		Save_logfile = m_ini.read_bool("","Save_logfile", false, false);
 		pointer_motors->set_SaveLogfile(Save_logfile);
-		
+
 		m_clock.Tic();
-		
+
 		//By default start with Manual Mode
 		control_mode = 0;
 		size_t giraffMode = 0;
@@ -105,7 +105,7 @@ bool CRobotGiraffApp::OnCommandMsg( CMOOSMsg Msg )
 bool CRobotGiraffApp::Iterate()
 {
 	try
-	{	
+	{
 		//Debug - Iteration time
 		//cout << endl << "Iteration time: " << m_clock.Tac();
 		m_clock.Tic();
@@ -113,7 +113,7 @@ bool CRobotGiraffApp::Iterate()
 		//Check the control mode (Manual=Pilot= 0, or autonomous=OpenMORA= 2)
 		if (control_mode == 2)
 		{
-			setGiraffVelocities(m_last_v,m_last_w);		
+			setGiraffVelocities(m_last_v,m_last_w);
 			string str=format("Velocities sent to the controller (time, v, w): (%f, %f, %f)", MOOSTime(), m_last_v, m_last_w);
 			//MOOSDebugWrite(str);
 		}
@@ -123,7 +123,7 @@ bool CRobotGiraffApp::Iterate()
 		CPose2D  odo;
 		double cur_v, cur_w, dist_l, dist_r;
 		getGiraffOdometryFull( odo, cur_v, cur_w, dist_l, dist_r);
-		
+
 		// Get odometry as Obs (Serializable Object):
 		mrpt::obs::CObservationOdometryPtr odom = mrpt::obs::CObservationOdometry::Create();
 		odom->sensorLabel = "ODOMETRY_BASE";
@@ -167,16 +167,16 @@ bool CRobotGiraffApp::DoRegistrations()
 {
 	//! @moos_subscribe MOTION_CMD_V
 	AddMOOSVariable( "MOTION_CMD_V", "MOTION_CMD_V", "MOTION_CMD_V", 0);
-    
-	//! @moos_subscribe MOTION_CMD_W    
+
+	//! @moos_subscribe MOTION_CMD_W
 	AddMOOSVariable( "MOTION_CMD_W", "MOTION_CMD_W", "MOTION_CMD_W", 0);
-	
-	//! @moos_subscribe SHUTDOWN	
+
+	//! @moos_subscribe SHUTDOWN
 	AddMOOSVariable( "SHUTDOWN", "SHUTDOWN", "SHUTDOWN", 0);
-		
+
 	//! @moos_subscribe ROBOT_CONTROL_MODE
 	AddMOOSVariable( "ROBOT_CONTROL_MODE", "ROBOT_CONTROL_MODE", "ROBOT_CONTROL_MODE", 0 );
-	
+
 	//! @moos_subscribe TILT_GET_ANGLE_FROM_HOME, TILT_SET_ANGLE_FROM_HOME
 	AddMOOSVariable( "TILT_GET_ANGLE_FROM_HOME", "TILT_GET_ANGLE_FROM_HOME", "TILT_GET_ANGLE_FROM_HOME", 0 );
 	AddMOOSVariable( "TILT_SET_ANGLE_FROM_HOME", "TILT_SET_ANGLE_FROM_HOME", "TILT_SET_ANGLE_FROM_HOME", 0 );
@@ -195,11 +195,11 @@ bool CRobotGiraffApp::OnNewMail(MOOSMSG_LIST &NewMail)
 		// V
 	    if (MOOSStrCmp(m.GetKey(),"MOTION_CMD_V"))
             m_last_v = m.GetDouble();
-		
+
 		// W
 	    if (MOOSStrCmp(m.GetKey(),"MOTION_CMD_W"))
             m_last_w = m.GetDouble();
-		
+
 		// Giraff Control
 		if (MOOSStrCmp(m.GetKey(),"ROBOT_CONTROL_MODE"))
 		{
@@ -221,7 +221,7 @@ bool CRobotGiraffApp::OnNewMail(MOOSMSG_LIST &NewMail)
 				MOOSDebugWrite("Giraff takes Control\n");
 			}
 		}
-		
+
 		// Get Tilt
 	    if (MOOSStrCmp(m.GetKey(),"TILT_GET_ANGLE_FROM_HOME") )
 		{
@@ -244,13 +244,13 @@ bool CRobotGiraffApp::OnNewMail(MOOSMSG_LIST &NewMail)
 			//! @moos_publish TILT_CURRENT_ANGLE_FROM_HOME: The current tilt angle (degress) of the robot's screen
 			m_Comms.Notify("TILT_CURRENT_ANGLE_FROM_HOME", current_angle);
 		}
-    
+
 
 		// ShutDown
 		if( (MOOSStrCmp(m.GetKey(),"SHUTDOWN")) && (MOOSStrCmp(m.GetString(),"true")) )
-			this->RequestQuit();		
+			this->RequestQuit();
 	}
-	
+
     UpdateMOOSVariables(NewMail);
     return true;
 }
@@ -303,7 +303,7 @@ void CRobotGiraffApp::getGiraffOdometryFull(poses::CPose2D	&out_odom,double &out
 	pointer_motors->execute("getVel",&out_lin_vel);
 	pointer_motors->execute("getMaximumVirtualGearRatio",&out_ang_vel);
 	pointer_motors->execute("getOdometry",&out_left_encoder_distance,&out_right_encoder_distance);
-			
+
 
 	incCenterOfRobot = (out_right_encoder_distance + out_left_encoder_distance)/2;
 	incOrientation = (out_right_encoder_distance-out_left_encoder_distance)/m_b;
@@ -311,10 +311,10 @@ void CRobotGiraffApp::getGiraffOdometryFull(poses::CPose2D	&out_odom,double &out
 
 	m_absoluteX = m_absoluteX + incCenterOfRobot*cos( m_orientation - 0.5*incOrientation );
 	m_absoluteY = m_absoluteY + incCenterOfRobot*sin( m_orientation - 0.5*incOrientation );
-		
+
 	cur_odo.x( m_absoluteX );
 	cur_odo.y( m_absoluteY );
-	cur_odo.phi( m_orientation );	
+	cur_odo.phi( m_orientation );
 	//printf("Odometry observation Pose-> x:%f y:%f phi:%f",m_absoluteX,m_absoluteY,m_orientation);
 	//printf("Odometry observation Velocities->v:%f w:%f left:%f right:%f\n",	out_lin_vel,out_ang_vel,
 	//		out_left_encoder_distance,out_right_encoder_distance);
@@ -324,7 +324,7 @@ void CRobotGiraffApp::getGiraffOdometryFull(poses::CPose2D	&out_odom,double &out
 
 /* Get battery information from Giraff robot */
 void CRobotGiraffApp::getGiraffBatteryData(bool &isDocked, double &bat_volt)
-{	
+{
 	// Chager data format: S:S#[Status value],[Parameter identifier]:[Value identifier]#[Parameter value] U#[CRC checksum][CR (carriage return character)]
 	std::string bat_data;
 	if (pointer_motors->execute("getChargerData", &bat_data))
@@ -336,8 +336,8 @@ void CRobotGiraffApp::getGiraffBatteryData(bool &isDocked, double &bat_volt)
 		size_t pos = bat_data.find(",");
 		std::string charge_status = bat_data.substr(0, pos);
 		bat_data.erase(0, pos+1);
-		double ch = atof( &(charge_status.back()) );
-		
+		double ch = atof( &(*charge_status.rbegin()) );
+
 		//printf("[CRobotGiraffApp]: Charger status is: %.1f\n",ch);
 		ch = (ch<2);	//D=0 o 1 -> Charging
 		if (ch != Is_Charging)
@@ -350,8 +350,8 @@ void CRobotGiraffApp::getGiraffBatteryData(bool &isDocked, double &bat_volt)
 			else
 				cout << "[CRobotGiraffApp]: Robot is not longer Charging its battery" << endl;
 		}
-		
-				
+
+
 		//Get the Parameter identifier and the value
 		// B#float is the current battery voltage in volts.
 		pos = bat_data.find("#");
@@ -365,27 +365,27 @@ void CRobotGiraffApp::getGiraffBatteryData(bool &isDocked, double &bat_volt)
 			pos = bat_data.find(" ");
 			std::string parameter_value = bat_data.substr(0, pos);
 			bat_data.erase(0, pos+1);
-			
-			//Pairwise-swap the string			
+
+			//Pairwise-swap the string
 			for(size_t i=0, middle=parameter_value.size()/2, size=parameter_value.size(); i<middle; i+=2 )
 			{
 				std::swap(parameter_value[i], parameter_value[size - i- 2]);
 				std::swap(parameter_value[i+1], parameter_value[size -i - 1]);
 			}
-			
+
 			//IEEE 754 : HEX to Float
 			unsigned int x;
 			std::stringstream ss;
 			ss << std::hex << parameter_value;
 			ss >> x;
 			float bat_voltage = reinterpret_cast<float&>(x);
-			//printf("[CRobotGiraffApp]: Battery voltage is: %.2f V\n", bat_voltage);			
-			
+			//printf("[CRobotGiraffApp]: Battery voltage is: %.2f V\n", bat_voltage);
+
 			//Publish
 			mrpt::slam::CObservationBatteryStatePtr battery_obs = mrpt::slam::CObservationBatteryState::Create();
 			battery_obs->timestamp = now();
 			battery_obs->voltageMainRobotBattery = bat_voltage;
-			battery_obs->voltageMainRobotBatteryIsValid = true;						
+			battery_obs->voltageMainRobotBatteryIsValid = true;
 			mrpt::vector_byte vec_bat;
 			mrpt::utils::ObjectToOctetVector(battery_obs.pointer(), vec_bat);
 			//!  @moos_publish   BATTERY_V   The curent battery level of the Mobile Robotic Base as an mrpt::CObservationBatteryState

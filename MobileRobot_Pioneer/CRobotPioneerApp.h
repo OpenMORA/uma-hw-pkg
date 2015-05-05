@@ -30,7 +30,7 @@
 #define CRobotPioneerApp_H
 
 
-#include <CopenMORAMOOSApp.h>
+#include <COpenMORAMOOSApp.h>
 #include <mrpt/hwdrivers/CActivMediaRobotBase.h>
 
 
@@ -58,7 +58,7 @@ protected:
 	// DATA
 	mrpt::hwdrivers::CActivMediaRobotBase  m_robot;
 	double m_last_v, m_last_w;
-	
+
 
 };
 

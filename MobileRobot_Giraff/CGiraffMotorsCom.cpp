@@ -1,4 +1,4 @@
-	
+
 	/*---------------------------------------------------------------
 	|					NAAS Control Architecture					|
 	|																|
@@ -61,7 +61,7 @@ bool CGiraffMotorsCom::init( )
 		m_comms=new NAAS::CGiraffCommunication();
 		mrpt::system::sleep(1000);
 		// Giraff motors send a message when you connect to them
-		string retrieveStartingMessage;		
+		string retrieveStartingMessage;
 		receive(retrieveStartingMessage);
 
 		//writeDebugLine(retrieveStartingMessage, MOTORS);
@@ -77,7 +77,7 @@ bool CGiraffMotorsCom::init( )
 				throw std::logic_error("Error while performing the Tilt Homing task");
 			}
 			mrpt::system::sleep(0.1);
-			
+
 		}
 		mrpt::system::sleep(5000);
 		double tilt;
@@ -92,16 +92,16 @@ bool CGiraffMotorsCom::init( )
 
 		//writeDebugLine(format("Initial velocity: %f, initial tilt angle from home: %f",m_vel,tilt), MOTORS);
 
-		return true;		
+		return true;
 	}
 	else
-	{	
+	{
 		printf("simulateeeeeeedddd");
 		mrpt::system::sleep(10000);
 		//writeDebugLine("Initialized simulated motors", MOTORS);
 		return true;
 	}
-	
+
 	//NAV_CATCH_MODULE("In init method")
 
 	//return false;
@@ -141,7 +141,7 @@ bool CGiraffMotorsCom::execute( const string &command, void *param1, void *param
 		else if ( command == "setRadius" )
 			return setRadius( *(static_cast<const double*>(param1)) );
 		else if ( command == "getMode" )
-			return getMode( *(static_cast<size_t*>(param1)) );
+			return getMode( *(static_cast<unsigned int*>(param1)) );
 		else if ( command == "setMode" )
 			return setMode( *(static_cast<const unsigned int*>(param1)) );
 		else if ( command == "setUndock" )
@@ -154,7 +154,7 @@ bool CGiraffMotorsCom::execute( const string &command, void *param1, void *param
 			return getTiltAngleFromHome( *(static_cast<double*>(param1)) );
 		else if ( command == "setTiltAngleFromHome" )
 			return setTiltAngleFromHome( *(static_cast<const double*>(param1)) );
-		else if ( command == "getMaximumVirtualGearRatio" )	
+		else if ( command == "getMaximumVirtualGearRatio" )
 			return getMaximumVirtualGearRatio( *(static_cast<double*>(param1)) );
 		else if ( command == "setMaximumVirtualGearRatio" )
 			return setMaximumVirtualGearRatio( *(static_cast<const double*>(param1)) );
@@ -178,7 +178,7 @@ bool CGiraffMotorsCom::execute( const string &command, void *param1, void *param
 		else if ( command == "get" )
 			return get();
 		else if ( command == "quit" )
-			return quit();		
+			return quit();
 		else
 			printf("ERROR! unknow command received...");
 		//	writeDebugLine("ERROR! unknow command received...", MOTORS );
@@ -203,7 +203,7 @@ bool CGiraffMotorsCom::execute( const string &command, void *param1, void *param
 
 		//	writeDebugLine(format("Sended setPos commanded used simulated motors with value: %f", inc),MOTORS);
 
-			return true;			
+			return true;
 		}
 		else if ( command == "setRadius" )
 		{
@@ -214,8 +214,8 @@ bool CGiraffMotorsCom::execute( const string &command, void *param1, void *param
 			if ( radius == 0 )
 				m_simulation.movingInStraighLine = false;
 			else if ( radius > 50 )
-				m_simulation.movingInStraighLine = true;				
-			
+				m_simulation.movingInStraighLine = true;
+
 			return true;
 		}
 		else if ( command == "getOdometry" )
@@ -226,7 +226,7 @@ bool CGiraffMotorsCom::execute( const string &command, void *param1, void *param
 			p1 = m_simulation.x;
 			p2 = m_simulation.y;
 			p3 = m_simulation.phi;
-			return true;		
+			return true;
 		}
 		else if ( command == "getVel" )
 		{
@@ -234,7 +234,7 @@ bool CGiraffMotorsCom::execute( const string &command, void *param1, void *param
 			vel = 0.5;
 			return true;
 		}
-		
+
 		return true;
 	}
 
@@ -243,9 +243,9 @@ bool CGiraffMotorsCom::execute( const string &command, void *param1, void *param
 	//return false;
 }
 //-----------------------------------------------------------
-//						executeGiraffCommand	
+//						executeGiraffCommand
 //-----------------------------------------------------------
-bool CGiraffMotorsCom::executeGiraffCommand( string &command, string &response ) 
+bool CGiraffMotorsCom::executeGiraffCommand( string &command, string &response )
 {
 	//NAV_TRY
 	string resp=response;
@@ -260,7 +260,7 @@ bool CGiraffMotorsCom::executeGiraffCommand( string &command, string &response )
 	size_t read;
 	while (resp==response){
 		read= m_comms->read(resp);
-		
+
 	}
 	response=read;
 	//cout << command << endl;
@@ -278,7 +278,7 @@ bool CGiraffMotorsCom::executeGiraffCommand( string &command, string &response )
 //					       getPos
 //-----------------------------------------------------------
 
-bool CGiraffMotorsCom::getPos( double &pos ) 
+bool CGiraffMotorsCom::getPos( double &pos )
 {
 	//NAV_TRY
 
@@ -290,7 +290,7 @@ bool CGiraffMotorsCom::getPos( double &pos )
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
 
 	pos = atof(response.c_str());
-	
+
 	return true;
 
 	//NAV_CATCH_MODULE("In method getPos")
@@ -303,7 +303,7 @@ bool CGiraffMotorsCom::getPos( double &pos )
 //					       setPos
 //-----------------------------------------------------------
 
-bool CGiraffMotorsCom::setPos( const double &pos ) 
+bool CGiraffMotorsCom::setPos( const double &pos )
 {
 	//NAV_TRY
 
@@ -314,7 +314,7 @@ bool CGiraffMotorsCom::setPos( const double &pos )
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
-	
+
 	return true;
 
 	//NAV_CATCH_MODULE("In method setPos")
@@ -327,7 +327,7 @@ bool CGiraffMotorsCom::setPos( const double &pos )
 //					       getVel
 //-----------------------------------------------------------
 
-bool CGiraffMotorsCom::getVel( double &vel ) 
+bool CGiraffMotorsCom::getVel( double &vel )
 {
 	//NAV_TRY
 
@@ -339,7 +339,7 @@ bool CGiraffMotorsCom::getVel( double &vel )
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
 
 	vel = atof(response.c_str());
-	
+
 	return true;
 
 	//NAV_CATCH_MODULE("In method getVel")
@@ -352,7 +352,7 @@ bool CGiraffMotorsCom::getVel( double &vel )
 //					     setVel
 //-----------------------------------------------------------
 
-bool CGiraffMotorsCom::setVel( const double &vel,const unsigned int &mode ) 
+bool CGiraffMotorsCom::setVel( const double &vel,const unsigned int &mode )
 {
 	//NAV_TRY
 
@@ -374,7 +374,7 @@ bool CGiraffMotorsCom::setVel( const double &vel,const unsigned int &mode )
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
-	
+
 	//m_vel += vel;
 
 	return true;
@@ -387,7 +387,7 @@ bool CGiraffMotorsCom::setVel( const double &vel,const unsigned int &mode )
 //					       getAcceleration
 //-----------------------------------------------------------
 
-bool CGiraffMotorsCom::getAcceleration( double &acc) 
+bool CGiraffMotorsCom::getAcceleration( double &acc)
 {
 	//NAV_TRY
 
@@ -399,7 +399,7 @@ bool CGiraffMotorsCom::getAcceleration( double &acc)
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
 
 	acc = atof(response.c_str());
-	
+
 	return true;
 
 	//NAV_CATCH_MODULE("In method getAcceleration")
@@ -411,21 +411,21 @@ bool CGiraffMotorsCom::getAcceleration( double &acc)
 //					     setAcceleration
 //-----------------------------------------------------------
 
-bool CGiraffMotorsCom::setAcceleration( const double &acc ) 
+bool CGiraffMotorsCom::setAcceleration( const double &acc )
 {
 	//NAV_TRY
 
 	string command;
-	
+
 		command = mrpt::format( "set a %.03f",acc);
-	
+
 	string response;
 
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
-	
-	
+
+
 	return true;
 
 	//NAV_CATCH_MODULE("In method setAcceleration")
@@ -437,7 +437,7 @@ bool CGiraffMotorsCom::setAcceleration( const double &acc )
 //					    getRadius
 //-----------------------------------------------------------
 
-bool CGiraffMotorsCom::getRadius( double &radius ) 
+bool CGiraffMotorsCom::getRadius( double &radius )
 {
 	//NAV_TRY
 
@@ -449,8 +449,8 @@ bool CGiraffMotorsCom::getRadius( double &radius )
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
 
 	radius = atof(response.c_str());
-	
-	return true;	
+
+	return true;
 
 	//NAV_CATCH_MODULE("In method getRadius")
 
@@ -462,7 +462,7 @@ bool CGiraffMotorsCom::getRadius( double &radius )
 //					     setRadius
 //-----------------------------------------------------------
 
-bool CGiraffMotorsCom::setRadius( const double &radius ) 
+bool CGiraffMotorsCom::setRadius( const double &radius )
 {
 	//NAV_TRY
 
@@ -472,7 +472,7 @@ bool CGiraffMotorsCom::setRadius( const double &radius )
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
-	
+
 	return true;
 
 	//NAV_CATCH_MODULE("In method setRadius")
@@ -485,7 +485,7 @@ bool CGiraffMotorsCom::setRadius( const double &radius )
 //					      getMode
 //-----------------------------------------------------------
 
-bool CGiraffMotorsCom::getMode( unsigned int &mode ) 
+bool CGiraffMotorsCom::getMode( unsigned int &mode )
 {
 	//NAV_TRY
 
@@ -497,8 +497,8 @@ bool CGiraffMotorsCom::getMode( unsigned int &mode )
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
 
 	mode = atoi(response.c_str());
-	
-	return true;	
+
+	return true;
 
 	//NAV_CATCH_MODULE("In method getMode")
 
@@ -510,7 +510,7 @@ bool CGiraffMotorsCom::getMode( unsigned int &mode )
 //					      setMode
 //-----------------------------------------------------------
 
-bool CGiraffMotorsCom::setMode( const unsigned int &mode ) 
+bool CGiraffMotorsCom::setMode( const unsigned int &mode )
 {
 	//NAV_TRY
 	unsigned int set_mode = mode;
@@ -521,7 +521,7 @@ bool CGiraffMotorsCom::setMode( const unsigned int &mode )
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
-	
+
 	return true;
 
 	//NAV_CATCH_MODULE("In method setMode")
@@ -544,7 +544,7 @@ bool CGiraffMotorsCom::setUndock( )
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
-	
+
 	return true;
 
 	//NAV_CATCH_MODULE("In method setUndock")
@@ -567,7 +567,7 @@ bool CGiraffMotorsCom::home()
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
-	
+
 	return true;
 
 	//NAV_CATCH_MODULE("In method home")
@@ -592,8 +592,8 @@ bool CGiraffMotorsCom::getTiltHomeState( size_t &state)
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
 
 	state = atoi(response.c_str());
-	
-	return true;		
+
+	return true;
 
 	//NAV_CATCH_MODULE("In method getTiltHomeState")
 
@@ -617,8 +617,8 @@ bool CGiraffMotorsCom::getTiltAngleFromHome( double &angle )
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
 
 	angle = atof(response.c_str());
-	
-	return true;	
+
+	return true;
 
 	//NAV_CATCH_MODULE("In method getTiltAngleFromHome")
 
@@ -641,7 +641,7 @@ bool CGiraffMotorsCom::setTiltAngleFromHome( const double &angle )
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
-	
+
 	return true;
 
 	//NAV_CATCH_MODULE("In method setTiltAngleFromHome")
@@ -666,8 +666,8 @@ bool CGiraffMotorsCom::getMaximumVirtualGearRatio( double &ratio )
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
 
 	ratio = DEG2RAD(atof(response.c_str()));
-	
-	return true;	
+
+	return true;
 
 	//NAV_CATCH_MODULE("In method getMaximumVirtualGearRatio")
 
@@ -689,7 +689,7 @@ bool CGiraffMotorsCom::setMaximumVirtualGearRatio( const double &ratio )
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
-	
+
 	return true;
 
 	//NAV_CATCH_MODULE("In method setMaximumVirtualGearRatio")
@@ -714,8 +714,8 @@ bool CGiraffMotorsCom::getVirtualGearRateOfChange( double &rate )
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
 
 	rate = atof(response.c_str());
-	
-	return true;	
+
+	return true;
 
 	//NAV_CATCH_MODULE("In method getVirtualGearRateOfChange")
 
@@ -737,7 +737,7 @@ bool CGiraffMotorsCom::setVirtualGearRateOfChange( const double &rate )
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
-	
+
 	//return true;
 
 	//NAV_CATCH_MODULE("In method setVirtualGearRateOfChange")
@@ -762,14 +762,14 @@ bool CGiraffMotorsCom::getClothoidDecelerationPoint( double &point )
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
 
 	point = atof(response.c_str());
-	
-	return true;	
+
+	return true;
 
 	//NAV_CATCH_MODULE("In method getClothoidDecelerationPoint")
 
 	//return false;
 }
-		
+
 
 //-----------------------------------------------------------
 //				setClothoidDecelerationPoint
@@ -785,7 +785,7 @@ bool CGiraffMotorsCom::setClothoidDecelerationPoint( const double &point )
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
-	
+
 	return true;
 
 	//NAV_CATCH_MODULE("In method setClothoidDecelerationPoint")
@@ -814,12 +814,12 @@ bool CGiraffMotorsCom::getOdometry( double &left, double &right )
 	command.clear();
 	command = "get imdr";
 	response.clear();
-	
+
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
 
 	right = atof(response.c_str());
 
-	return true;	
+	return true;
 
 	//NAV_CATCH_MODULE("In getOdometry")
 
@@ -838,12 +838,12 @@ bool CGiraffMotorsCom::getChargerInfo( vector<string> &response )
 	string command("t");
 
 	const size_t n_lines = 8;
-	
+
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
 	if ( ( !transmit(command) ) || (!receiveVariousLines(response,n_lines)) ) return false;
 
-	return true;	
+	return true;
 
 	//NAV_CATCH_MODULE("In method getChargerInfo method")
 
@@ -865,7 +865,7 @@ bool CGiraffMotorsCom::getChargerStatus( string &response )
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
 
-	return true;	
+	return true;
 
 	//NAV_CATCH_MODULE("In method getChargerStatus method")
 
@@ -889,7 +889,7 @@ bool CGiraffMotorsCom::get()
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
 
-	return true;	
+	return true;
 
 	//NAV_CATCH_MODULE("In method get")
 
@@ -906,7 +906,7 @@ bool CGiraffMotorsCom::get()
 bool CGiraffMotorsCom::getChargerData( string &response )
 {
 	//NAV_TRY
-	
+
 	string command("get charger_data");
 	//string command("get button_data");
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
@@ -940,14 +940,14 @@ bool CGiraffMotorsCom::getChargerData( string &response )
 bool CGiraffMotorsCom::quit()
 {
 	//NAV_TRY
-	
+
 	string command( "q" );
-	string response;	
+	string response;
 	logFile.close();
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
-	
+
 	return true;
 
 	//NAV_CATCH_MODULE("In method quit")
@@ -960,18 +960,18 @@ bool CGiraffMotorsCom::quit()
 //					     transmit
 //-----------------------------------------------------------
 
-bool CGiraffMotorsCom::transmit( string &command ) 
+bool CGiraffMotorsCom::transmit( string &command )
 {
 	//NAV_TRY
 	// '|' character is used as command delimiter
-	command.append("|");	
+	command.append("|");
 	size_t written = m_comms->write( command );
 	//printf("[CGiraffMotorsCom]: Command written is: %s\n",command.c_str());
-	
+
 	//Save to logFile
 	string str = mrpt::format("Tx: %s time: %s \n",command.c_str(),MOOSGetTimeStampString().c_str());
 	saveToLogfile(str);
-	
+
 	// Error?
 	if(!written)
 	{
@@ -980,7 +980,7 @@ bool CGiraffMotorsCom::transmit( string &command )
 		saveToLogfile(str);
 		return false;
 	}
-		
+
 	return true;
 
 	//NAV_CATCH_MODULE("In transmit method")
@@ -992,7 +992,7 @@ bool CGiraffMotorsCom::transmit( string &command )
 //					     receive
 //-----------------------------------------------------------
 
-bool CGiraffMotorsCom::receive(string &response) 
+bool CGiraffMotorsCom::receive(string &response)
 {
 	//NAV_TRY
 
@@ -1003,9 +1003,9 @@ bool CGiraffMotorsCom::receive(string &response)
 		printf("\nCommand could not be received.\n");
 		str = mrpt::format("Command could not be received. time: %s \n",MOOSGetTimeStampString().c_str());
 		saveToLogfile(str);
-		return false;	
+		return false;
 	}
-	//writeDebugLine(format("Response: %s",response.c_str()),MOTORS);	
+	//writeDebugLine(format("Response: %s",response.c_str()),MOTORS);
 	//printf("[CGiraffMotorsCom]: Response: %s\n",response.c_str());
 
 	// Readget w OK> prompted message
@@ -1024,20 +1024,20 @@ bool CGiraffMotorsCom::receive(string &response)
 //				  receiveVariousLines
 //-----------------------------------------------------------
 
-bool CGiraffMotorsCom::receiveVariousLines( vector<string> &response, const size_t &n_lines ) 
+bool CGiraffMotorsCom::receiveVariousLines( vector<string> &response, const size_t &n_lines )
 {
-	//NAV_TRY	
+	//NAV_TRY
 
 	response.clear();
 	response.resize( n_lines );
-	
+
 	// Read response
 	for ( size_t i_line = 0; i_line < n_lines; i_line++ )
 		m_comms->read( response[i_line] );
 
 	//for ( size_t i_line = 0; i_line < n_lines; i_line++ )
 	//	writeDebugLine(format("Response: %s",response[i_line].c_str()),MOTORS);
-	
+
 	return true;
 
 	//NAV_CATCH_MODULE("In receive method")
@@ -1049,9 +1049,9 @@ bool CGiraffMotorsCom::receiveVariousLines( vector<string> &response, const size
 //				  testSpeed
 //-----------------------------------------------------------
 
-bool CGiraffMotorsCom::testSpeed() 
+bool CGiraffMotorsCom::testSpeed()
 {
-	//NAV_TRY	
+	//NAV_TRY
 
     string command( "test_speed" );
 	string response;
@@ -1059,7 +1059,7 @@ bool CGiraffMotorsCom::testSpeed()
 	mrpt::synch::CCriticalSectionLocker cs( &semaphore );
 
 	if ( ( !transmit(command) ) || (!receive(response)) ) return false;
-	
+
 	return true;
 
 
@@ -1073,7 +1073,7 @@ bool CGiraffMotorsCom::testSpeed()
 /** Indicates wheter or not save a log file */
 void CGiraffMotorsCom::set_SaveLogfile(bool logfile_option)
 {
-	Save_logfile = logfile_option;	
+	Save_logfile = logfile_option;
 }
 
 

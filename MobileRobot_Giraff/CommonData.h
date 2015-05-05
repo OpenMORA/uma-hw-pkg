@@ -1,4 +1,4 @@
-	
+
 	/*---------------------------------------------------------------
 	|					NAAS Control Architecture					|
 	|																|
@@ -44,8 +44,8 @@ namespace NAAS
 
 		/** Constructor. */
 		CData():m_semaphore(1,1)
-		{ 
-			m_time = mrpt::system::now(); 
+		{
+			m_time = mrpt::system::now();
 		}
 
 		/** Constructor. */
@@ -63,33 +63,33 @@ namespace NAAS
 		void setAllFresh();
 
 		/** Get the age of the data */
-		inline double getAge( const mrpt::system::TTimeStamp &now ) 
-		{ 
-			return mrpt::system::timeDifference( now, m_time ); 
+		inline double getAge( const mrpt::system::TTimeStamp &now )
+		{
+			return mrpt::system::timeDifference( now, m_time );
 		}
 
 		/** Is fresh the data for a certain module? */
 		inline bool isFresh(const string &module)
-		{ 
-			return m_fresh[module]; 
+		{
+			return m_fresh[module];
 		}
 
-		/** Set the freshness of the data for a certain module. */ 
+		/** Set the freshness of the data for a certain module. */
 		inline void setFresh( const string &module, const bool &newVaule )
-		{ 
-			m_fresh[module] = newVaule; 
+		{
+			m_fresh[module] = newVaule;
 		}
 
 		/** Working with the data! */
 		inline void working()
-		{ 
-			m_semaphore.waitForSignal(); 
+		{
+			m_semaphore.waitForSignal();
 		}
 
 		/** Work finished with the data */
 		inline void endWorking()
-		{ 
-			m_semaphore.release(); 
+		{
+			m_semaphore.release();
 		}
 
 	};
@@ -111,23 +111,23 @@ namespace NAAS
 
 		/** Set robot localization in accordance with the odometry. */
 		void setOdometry ( const mrpt::poses::CPose2D &cur_pose , const mrpt::system::TTimeStamp &now )
-		{ 
-			m_curPose = cur_pose; 
-			m_time = now; 
-			setAllFresh(); 
+		{
+			m_curPose = cur_pose;
+			m_time = now;
+			setAllFresh();
 		}
 
 		/** Get robot localization in accordance with the odometry. */
 		void getOdometry ( mrpt::poses::CPose2D &cur_pose, mrpt::system::TTimeStamp &time )
-		{ 
-			cur_pose = m_curPose; 
-			time =  m_time; 
+		{
+			cur_pose = m_curPose;
+			time =  m_time;
 		}
 
 		/** Get robot localization in accordance with the odometry as a CPose2D. */
 		mrpt::poses::CPose2D getAsPose2D()
-		{ 
-			return m_curPose; 
+		{
+			return m_curPose;
 		}
 
 	};
@@ -141,5 +141,5 @@ namespace NAAS
 
 }
 
-#endif _CCOMMONDATA_
+#endif //_CCOMMONDATA_
 
