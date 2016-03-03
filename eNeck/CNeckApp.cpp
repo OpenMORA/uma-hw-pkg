@@ -151,14 +151,21 @@ bool CNeckApp::Iterate()
 	{
 		neckMsg->SetFresh(false);
 
+		cout << "Received command: " << neckMsg->GetStringVal() << endl;
+
 		std::vector<string> tokens;
 		mrpt::system::tokenize( neckMsg->GetStringVal(), "=,", tokens );
-		if( tokens.size() != 8  ||			// SERVO: Servo to turn (integer)
-			strcmp( tokens[0].c_str(), "SERVO" ) ||			// FILTER: Whether or not to filter the current angle (0|1)
+
+		// The msg must be as this: SERVO=0,ANG=20.3,SPEED=60,FILTER=1
+		if( tokens.size() != 8  ||			
+			strcmp( tokens[0].c_str(), "SERVO" ) ||			// SERVO: Servo to turn (integer)
 			strcmp( tokens[2].c_str(), "ANG" ) ||			// ANG: Angle to turn (double)
 			strcmp( tokens[4].c_str(), "SPEED" ) ||			// SPEED: The speed of the servo (15->250)
-			strcmp( tokens[6].c_str(), "FILTER" ) )			// The msg must be as this: SERVO=0,ANG=20.3,SPEED=60,FILTER=1
+			strcmp( tokens[6].c_str(), "FILTER" ) )			// FILTER: Whether or not to filter the current angle (0|1)
 		{
+			for(int i = 0; i < tokens.size(); ++i)
+				cout << "Token[" << i << "]=" << tokens[i] << endl;
+
 			this->SendSystemLogString( "pNeck: Bad string received" );
 			MOOSTrace("Bad String received.\n");
 			return false;
@@ -169,12 +176,6 @@ bool CNeckApp::Iterate()
 		speed	= atoi( tokens[5].c_str() );
 		filter	= !strcmp( tokens[7].c_str(), "1" ) ? true : false;
 
-		//MOOSTrace("%i\n",servo);
-		//MOOSTrace("%f\n",angle);
-		//MOOSTrace("%i\n",speed);
-		//MOOSTrace("%f\n",filter);
-		//MOOSTrace("%f\n",offsetServo[servo]);
-		//MOOSTrace("%f\n",angle-offsetServo[servo]);
 		// Main module loop code. Do the main stuff here...
 		if( filter )
 		{
